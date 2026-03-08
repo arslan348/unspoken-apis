@@ -1,18 +1,15 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const { v2: cloudinary } = require('cloudinary');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads'));
-  },
-  filename(req, file, cb) {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, unique + path.extname(file.originalname));
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 function fileFilter(req, file, cb) {
@@ -27,17 +24,32 @@ function fileFilter(req, file, cb) {
 }
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max
 });
 
-router.post('/', auth, upload.single('image'), (req, res) => {
+router.post('/', auth, upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ success: false, message: 'No file uploaded' });
   }
-  const url = `/uploads/${req.file.filename}`;
-  res.status(200).json({ success: true, url });
+
+  try {
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'ecommerce' },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    res.status(200).json({ success: true, url: result.secure_url });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Image upload failed' });
+  }
 });
 
 // Handle multer errors

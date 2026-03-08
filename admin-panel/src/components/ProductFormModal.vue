@@ -2,7 +2,7 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import { useCategories } from '../composables/useCategories.js'
 import { useProducts } from '../composables/useProducts.js'
-import { apiBase } from '../utils/api.js'
+import { apiBase } from '../utils/api'
 
 const props = defineProps({
   show: Boolean,

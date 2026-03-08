@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { apiBase } from '../utils/api.js'
+import { apiBase } from '../utils/api'
 
 interface User {
   id: string

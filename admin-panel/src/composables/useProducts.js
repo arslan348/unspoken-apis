@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { apiBase } from '../utils/api.js'
+import { apiBase } from '../utils/api'
 
 const products = ref([])
 const loading = ref(false)
