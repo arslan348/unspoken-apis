@@ -5,7 +5,7 @@ exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find()
       .populate('createdBy', 'name email')
-      .populate('category', 'name slug')
+      .populate('categories', 'name slug')
       .populate('relatedProducts', 'name image price');
     res.status(200).json({
       success: true,
@@ -22,7 +22,7 @@ exports.getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
       .populate('createdBy', 'name email')
-      .populate('category', 'name slug')
+      .populate('categories', 'name slug')
       .populate('relatedProducts', 'name image price');
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
@@ -39,10 +39,10 @@ exports.getProduct = async (req, res) => {
 // Create product
 exports.createProduct = async (req, res) => {
   try {
-    const { name, description, price, category, stock, image } = req.body;
+    const { name, description, price, categories, stock, image } = req.body;
 
     // Validate input
-    if (!name || !description || !price || !category) {
+    if (!name || !description || !price || !categories || categories.length === 0) {
       return res.status(400).json({ success: false, message: 'Please provide all required fields' });
     }
 
@@ -50,7 +50,7 @@ exports.createProduct = async (req, res) => {
       name,
       description,
       price,
-      category,
+      categories,
       stock: stock || 0,
       image: image || '',
       createdBy: req.user.id,

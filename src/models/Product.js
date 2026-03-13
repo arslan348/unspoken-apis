@@ -25,11 +25,12 @@ const productSchema = new mongoose.Schema(
       default: '',
       trim: true,
     },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category',
-      required: [true, 'Please provide a product category'],
-    },
+    categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+      },
+    ],
     stock: {
       type: Number,
       required: [true, 'Please provide stock quantity'],
