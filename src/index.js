@@ -8,6 +8,9 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const aboutRoutes = require('./routes/aboutRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const postexRoutes = require('./routes/postexRoutes');
 const path = require('path');
 
 // Load environment variables
@@ -34,6 +37,9 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/postex', postexRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
